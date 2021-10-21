@@ -1,23 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
 
 function App() {
+  const [todoState, setTodoState] = useState([]);
+  const [formState, setFormState] = useState({ text: "" });
+  const ins = formState.text;
+
+  const handleOnChange = (event) => {
+    event.preventDefault();
+    setFormState((formState) => ({
+      ...formState,
+      [event.target.name]: event.target.value,
+    }));
+  }
+
+  const handleOnSubmit = (event) => {
+    event.preventDefault();
+    setTodoState(todoState => [
+      ...todoState,
+      { ...formState, isDone: false }
+    ]);
+    setFormState({ text: "" });
+  }
+
+
+
+  function Search() {
+    fetch(`https://api.github.com/users/${ins}`)
+      .then(response => response.json())
+      .then(json => console.log(json));
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+    <div>
+
+      <form onSubmit={handleOnSubmit}>
+        <label for="text">Github username:</label><br /><br />
+        <input name="text" type="text" placeholder="e.g. faceebook"
+          onChange={handleOnChange}
+          value={formState.text}
+
+        />
+        <button type="submit">Search</button>
+      </form>
+
     </div>
   );
 }
